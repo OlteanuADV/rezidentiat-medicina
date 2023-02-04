@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\WelcomeUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -16,12 +18,11 @@ class AuthController extends Controller
     public function loginPost(Request $request)
     {
         $user = User::where('username', $request->email)->first();
+
         if(password_verify($request->password, $user->password)) {
             Auth::login($user, $request->remember == 'on' ? true : false);
             return redirect()->route('home');
         } 
-
-        $user = User::where('username', $request->email)->where('password', bcrypt($request->password))->first();
 
         if($user) {
             Auth::login($user, $request->remember == 'on' ? true : false);
@@ -50,6 +51,8 @@ class AuthController extends Controller
         ]);
 
         Auth::login($user);
+        $this->newEmail($user);
+        
 
         return redirect()->route('home');
     }
@@ -58,5 +61,11 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->route('login');
+    }
+
+    public function newEmail(User $user)
+    {
+        Mail::to("cristian.olteanu2017@gmail.com")->send(new WelcomeUser($user));
+        // Mail::to($request->user())->cc($moreUsers)->bcc($evenMoreUsers)->send(new OrderShipped($order));
     }
 }

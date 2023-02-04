@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('remember_token')->nullable();
-            $table->timestamp('updated_at')->nullable()->after('created_at');
+            // $table->string('remember_token')->nullable();
+            // $table->timestamp('updated_at')->nullable()->after('created_at');
         });
     }
 
